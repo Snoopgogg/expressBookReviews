@@ -20,12 +20,12 @@ regdUsers.post('/login', (req, res) => {
     return res.status(401).json({ message: 'Invalid username or password.' });
   }
   const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h' });
-  return res.status(200).json({ message: 'Login successful.', token });
+  return res.status(200).json({ message: 'Login successful!', token });
 });
 
 // Add or update a review. JWT authentication is enforced in index.js.
 regdUsers.put('/auth/review/:isbn', (req, res) => {
-  const isbn = req.params.isbn;
+  const { isbn } = req.params;
   const book = books[isbn];
   if (!book) return res.status(404).json({ message: 'Book not found.' });
   const review = req.body && req.body.review;
@@ -35,16 +35,14 @@ regdUsers.put('/auth/review/:isbn', (req, res) => {
   const username = req.user.username;
   book.reviews[username] = review.trim();
   return res.status(200).json({
-    message: 'Review successfully added/updated.',
-    isbn,
-    username,
-    review: book.reviews[username],
+    message: 'Review added/updated successfully',
+    reviews: book.reviews
   });
 });
 
 // Delete the logged-in user's review for a book.
 regdUsers.delete('/auth/review/:isbn', (req, res) => {
-  const isbn = req.params.isbn;
+  const { isbn } = req.params;
   const book = books[isbn];
   if (!book) return res.status(404).json({ message: 'Book not found.' });
   const username = req.user.username;
@@ -52,9 +50,10 @@ regdUsers.delete('/auth/review/:isbn', (req, res) => {
     return res.status(404).json({ message: 'No review exists for this user and book.' });
   }
   delete book.reviews[username];
-  return res.status(200).json({ message: 'Review successfully deleted.', isbn, username });
+  return res.status(200).json({ message: `Review for ISBN ${isbn} deleted` });
 });
 
 module.exports.authenticated = regdUsers;
 module.exports.isValid = isValid;
 module.exports.users = users;
+module.exports.JWT_SECRET = JWT_SECRET;
