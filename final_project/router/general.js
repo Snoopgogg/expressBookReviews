@@ -16,7 +16,7 @@ publicUsers.post('/register', (req, res) => {
     return res.status(409).json({ message: 'User already exists. Please choose another username.' });
   }
   users.push({ username: cleanUsername, password });
-  return res.status(201).json({ message: 'User successfully registered. Now you can login.' });
+  return res.status(201).json({ message: 'User successfully registered. Now you can login' });
 });
 
 // Get every book, including its author, title and reviews.
