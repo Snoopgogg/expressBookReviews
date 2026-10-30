@@ -5,7 +5,6 @@ const users = require('./auth_users.js').users;
 
 const publicUsers = express.Router();
 
-// Register a new customer.
 publicUsers.post('/register', (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password || typeof username !== 'string' || typeof password !== 'string') {
@@ -21,17 +20,14 @@ publicUsers.post('/register', (req, res) => {
   return res.status(201).json({ message: 'User successfully registered. You can now log in.' });
 });
 
-// Get all books available in the shop.
 publicUsers.get('/', (_req, res) => res.status(200).json(books));
 
-// Get a book by ISBN.
 publicUsers.get('/isbn/:isbn', (req, res) => {
   const book = books[req.params.isbn];
   if (!book) return res.status(404).json({ message: 'Book not found.' });
-  return res.status(200).json({ [req.params.isbn]: book });
+  return res.status(200).json(book);
 });
 
-// Get all books by author (case-insensitive exact author match).
 publicUsers.get('/author/:author', (req, res) => {
   const author = req.params.author.trim().toLocaleLowerCase();
   const matches = Object.fromEntries(
@@ -41,7 +37,6 @@ publicUsers.get('/author/:author', (req, res) => {
   return res.status(200).json(matches);
 });
 
-// Get all books by title (case-insensitive exact title match).
 publicUsers.get('/title/:title', (req, res) => {
   const title = req.params.title.trim().toLocaleLowerCase();
   const matches = Object.fromEntries(
@@ -51,7 +46,6 @@ publicUsers.get('/title/:title', (req, res) => {
   return res.status(200).json(matches);
 });
 
-// Get reviews for a book.
 publicUsers.get('/review/:isbn', (req, res) => {
   const book = books[req.params.isbn];
   if (!book) return res.status(404).json({ message: 'Book not found.' });
